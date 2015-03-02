@@ -67,9 +67,6 @@ class TreasuryDirect(object):
             # No data - Bad Issue Date
             return None
 
-
-        # http://www.treasurydirect.gov/NP_WS/
-
     def security_info(self, cusip, issue_date):
         """
         This function returns data about a specific security identified by CUSIP and issue date.
@@ -79,8 +76,6 @@ class TreasuryDirect(object):
         url = self.base_url + self.securities_endpoint + '{}/{}?format=json'.format(cusip, issue_date)
         security_dict = self._process_request(url)
         return security_dict
-        # http://www.treasurydirect.gov/TA_WS/securities912796CJ6/02/11/2014?format=json
-        # http://www.treasurydirect.gov/TA_WS/securities/912796CJ6/02/11/2014?format=xhtml 
 
     def announced(self, security_type, days=7 ,pagesize=2, reopening='Yes'):
         """
@@ -88,12 +83,11 @@ class TreasuryDirect(object):
         Max 250 results.  
         Ordered by announcement date (descending), auction date (descending), issue date (descending), security term length (ascending)
         """
-        # if any(security_type.lower() in s.lower() for s.lower() in types):
         self._check_type(security_type)
         url = self.base_url + self.securities_endpoint + '/announced?format=json' + '&type={}'.format(security_type) 
         announced_dict = self._process_request(url)
         return announced_dict
-        # http://www.treasurydirect.gov/TA_WS/securities/announced?format=html&type=FRN 
+
 
 if __name__=='__main__':
     td = TreasuryDirect()
