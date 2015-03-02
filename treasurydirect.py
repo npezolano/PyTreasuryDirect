@@ -1,6 +1,5 @@
-from collections import deque
-import requests
 import datetime
+import requests
 
 class TDException(Exception):
     def __init__(self, error):
@@ -8,12 +7,12 @@ class TDException(Exception):
     def __str__(self):
         return self.error
 
-error_400 = TDException("Bad request")
-error_401 = TDException("Unauthorized")
-error_404 = TDException("Treasury data not found")
-error_429 = TDException("Too many requests")
-error_500 = TDException("Internal server error")
-error_503 = TDException("Service unavailable")
+error_400 = TDException('Bad request')
+error_401 = TDException('Unauthorized')
+error_404 = TDException('Treasury data not found')
+error_429 = TDException('Too many requests')
+error_500 = TDException('Internal server error')
+error_503 = TDException('Service unavailable')
 
 class TreasuryDirect(object):
     def __init__(self):
@@ -43,9 +42,13 @@ class TreasuryDirect(object):
 
     def _check_date(self, date):
         if isinstance(date, str):
+            try:
+                datetime.datetime.strptime(date, '%m/%d/%Y')
+            except ValueError:
+                raise ValueError('Incorrect data format, should be MM/DD/YYYY')
             return date
         if isinstance(date, datetime.date):
-            return date.strftime("%m/%d/%Y")
+            return date.strftime('%m/%d/%Y')
 
         # http://www.treasurydirect.gov/NP_WS/
 
@@ -55,17 +58,20 @@ class TreasuryDirect(object):
         s = self.base_url + self.securities_endpoint + '{}/{}?format=json'.format(cusip, date)
         r = requests.get(s)
         self._raise_status(r)
-        security_dict = r.json()
-        return security_dict
+        try:
+            security_dict = r.json()
+            return security_dict
+        except:
+            # No data
+            return None
         # http://www.treasurydirect.gov/TA_WS/securities912796CJ6/02/11/2014?format=json
         # http://www.treasurydirect.gov/TA_WS/securities/912796CJ6/02/11/2014?format=xhtml 
 
-
-
-# http://www.treasurydirect.gov/TA_WS/securities/912796CJ6/02/11/2014?format=json
+    # def announced(self, tpye, days=7 ,pagesize=2, reopening='Yes'):
+        # Bill, Note, Bond, CMB, TIPS, FRN
+        # http://www.treasurydirect.gov/TA_WS/securities/announced?format=html&type=FRN 
 
 if __name__=='__main__':
     td = TreasuryDirect()
-    # s = td.security_info('912796CJ6', '02/11/2014') 
-    s = td.security_info('912796CJ6', datetime.date(2014, 2, 11))
-    print s
+    # print td.security_info('912796CJ6', '02/11/2014') 
+    print td.security_info('912796AW9', datetime.date(2014, 2, 28))
