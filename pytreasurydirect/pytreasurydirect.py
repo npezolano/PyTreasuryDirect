@@ -55,7 +55,7 @@ class TreasuryDirect(object):
         if s in types:
             return
         else:
-            raise ValueError('Incorrect security tpye format, should be one of Bill, Note, Bond, CMB, TIPS, FRN')
+            raise ValueError('Incorrect security type format, should be one of (Bill, Note, Bond, CMB, TIPS, FRN)')
 
     def _process_request(self, url):
         r = requests.get(url)
@@ -101,10 +101,9 @@ class TreasuryDirect(object):
         url = self.base_url + self.securities_endpoint + '{}?format=json'.format(security_type)
         security_dict = self._process_request(url)
         return security_dict
-        # http://www.treasurydirect.gov/TA_WS/securities/FRN?format=html
 
     def security_search(self):
-        raise NotImplementedError('not implemented yet')
+        raise NotImplementedError('Not implemented yet')
 
     def current_debt(self):
         """
@@ -140,7 +139,7 @@ if __name__=='__main__':
     print td.security_hist('FRN')
     print td.security_hist('FRN', True)
     print td.security_type('FRN')
-    print td.security_search()
+    # print td.security_search()
     print td.current_debt()
     print td.get_debt_by_date(datetime.date(2014, 1, 2))
     print td.get_debt_range(datetime.date(2014, 1, 1), datetime.date(2014, 2, 1))
