@@ -40,15 +40,15 @@ class TreasuryDirect(object):
         if len(cusip) != 9:
             raise Exception('CUSIP is not length 9')
 
-    def _check_date(self, date):
+    def _check_date(self, date, dt_format):
         if isinstance(date, str):
             try:
-                datetime.datetime.strptime(date, '%m/%d/%Y')
+                datetime.datetime.strptime(date, dt_format)
             except ValueError:
-                raise ValueError('Incorrect data format, should be MM/DD/YYYY')
+                raise ValueError('Incorrect data format, should be ' + dt_format)
             return date
         if isinstance(date, datetime.date):
-            return date.strftime('%m/%d/%Y')
+            return date.strftime(dt_format)
 
     def _check_type(self, s):
         types = ['Bill', 'Note', 'Bond', 'CMB', 'TIPS', 'FRN']
@@ -72,7 +72,7 @@ class TreasuryDirect(object):
         This function returns data about a specific security identified by CUSIP and issue date.
         """
         self._check_cusip(cusip)
-        issue_date = self._check_date(issue_date)
+        issue_date = self._check_date(issue_date, '%m/%d/%Y')
         url = self.base_url + self.securities_endpoint + '{}/{}?format=json'.format(cusip, issue_date)
         security_dict = self._process_request(url)
         return security_dict
@@ -104,7 +104,34 @@ class TreasuryDirect(object):
         # http://www.treasurydirect.gov/TA_WS/securities/FRN?format=html
 
     def security_search(self):
-        raise NotImplementedError('not implemented')
+        raise NotImplementedError('not implemented yet')
+
+    def current_debt(self):
+        """
+        This function returns the most recent debt data.
+        """
+        url = self.base_url + self.debt_endpoint + 'current?format=json'
+        debt = self._process_request(url)
+        return debt
+
+    def get_debt_by_date(self, dt):
+        """
+        This function returns the debt data for a particular date.
+        """
+        dt = self._check_date(dt, '%Y/%m/%d')
+        url = self.base_url + self.debt_endpoint + '{}?format=json'.format(dt)
+        debt = self._process_request(url)
+        return debt
+
+    def get_debt_range(self, start_dt, end_dt):
+        """
+        This function returns debt data based on the parameters passed.  
+        """
+        start_dt = self._check_date(start_dt, '%Y-%m-%d') 
+        end_dt = self._check_date(end_dt, '%Y-%m-%d')
+        url = self.base_url + self.debt_endpoint + 'search?startdate={}&enddate={}&format=json'.format(start_dt, end_dt)
+        debt = self._process_request(url)
+        return debt
 
 if __name__=='__main__':
     td = TreasuryDirect()
@@ -113,4 +140,7 @@ if __name__=='__main__':
     print td.security_hist('FRN')
     print td.security_hist('FRN', True)
     print td.security_type('FRN')
-    # print td.security_search()
+    print td.security_search()
+    print td.current_debt()
+    print td.get_debt_by_date(datetime.date(2014, 1, 2))
+    print td.get_debt_range(datetime.date(2014, 1, 1), datetime.date(2014, 2, 1))
