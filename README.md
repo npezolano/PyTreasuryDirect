@@ -1,7 +1,7 @@
 # PyTreasuryDirect
 PyTreasuryDirect is a thin wrapper on top of the [Treasury Direct Web API][1]
 
-## To Start...
+## To Start
 PyTreasuryDirect uses the Requests Python package. To install:
 ```
 pip install requests

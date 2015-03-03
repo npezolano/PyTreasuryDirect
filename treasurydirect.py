@@ -77,20 +77,40 @@ class TreasuryDirect(object):
         security_dict = self._process_request(url)
         return security_dict
 
-    def announced(self, security_type, days=7 ,pagesize=2, reopening='Yes'):
+    def security_hist(self, security_type, auction=False, days=7, pagesize=2, reopening='Yes'):
         """
-        This function returns data about announced securities.  
+        This function returns data about announced or auctioned securities.  
         Max 250 results.  
         Ordered by announcement date (descending), auction date (descending), issue date (descending), security term length (ascending)
+        If auction is true returns auctioned securities
         """
         self._check_type(security_type)
-        url = self.base_url + self.securities_endpoint + '/announced?format=json' + '&type={}'.format(security_type) 
+        if auction:
+            s = 'auctioned'
+        else:
+            s = 'announced'
+        url = self.base_url + self.securities_endpoint + s + '?format=json' + '&type={}'.format(security_type) 
         announced_dict = self._process_request(url)
         return announced_dict
 
+    def security_type(self, security_type):
+        """
+        This function returns data about securities of a particular type.
+        """
+        self._check_type(security_type)
+        url = self.base_url + self.securities_endpoint + '{}?format=json'.format(security_type)
+        security_dict = self._process_request(url)
+        return security_dict
+        # http://www.treasurydirect.gov/TA_WS/securities/FRN?format=html
+
+    def security_search(self):
+        raise NotImplementedError('not implemented')
 
 if __name__=='__main__':
     td = TreasuryDirect()
     print td.security_info('912796CJ6', '02/11/2014') 
     print td.security_info('912796AW9', datetime.date(2013, 3, 7))
-    print td.announced('FRN')
+    print td.security_hist('FRN')
+    print td.security_hist('FRN', True)
+    print td.security_type('FRN')
+    # print td.security_search()
