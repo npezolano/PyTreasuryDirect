@@ -9,6 +9,7 @@ pip install requests
 
 ## Example 
 ```python
+from pytreasurydirect import TreasuryDirect
 td = TreasuryDirect()
 print td.security_info('912796CJ6', '02/11/2014') 
 # or 
