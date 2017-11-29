@@ -16,7 +16,7 @@ error_503 = TDException('Service unavailable')
 
 class TreasuryDirect(object):
     def __init__(self):
-        self.base_url = 'http://www.treasurydirect.gov'
+        self.base_url = 'https://www.treasurydirect.gov'
         self.securities_endpoint = '/TA_WS/securities/'
         self.debt_endpoint = '/NP_WS/debt/'
 
