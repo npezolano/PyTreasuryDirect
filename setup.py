@@ -3,7 +3,7 @@ from os import path, walk
 
 setup(
     name='PyTreasuryDirect',
-    version='0.1.0',
+    version='0.1.1',
     zip_safe = True,
     packages=find_packages(),
     license='MIT',
