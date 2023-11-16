@@ -1,1 +1,1 @@
-from pytreasurydirect import *
+from .pytreasurydirect import *
